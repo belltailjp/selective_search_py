@@ -30,7 +30,20 @@ boost::numpy::ndarray segment(const boost::numpy::ndarray& input_image, float si
         throw std::runtime_error("input_image must be C-style contiguous");
     }
 
-    return input_image;
+    // Convert to internal format
+    image<rgb> seg_input_img(w, h);
+    rgb* p = reinterpret_cast<rgb*>(input_image.get_data());
+    std::copy(p, p + w * h, seg_input_img.data);
+
+    int num_css;
+    image<rgb> *seg_result_img = segment_image(&seg_input_img, sigma, c, min_size, &num_css);
+
+    // Convert from internal format
+    boost::numpy::ndarray result_image = boost::numpy::empty(nd, input_image.get_shape(), input_image.get_dtype());
+    std::copy(seg_result_img->data, seg_result_img->data + w * h, reinterpret_cast<rgb*>(result_image.get_data()));
+
+    delete seg_result_img;
+    return result_image;
 }
 
 BOOST_PYTHON_MODULE(segment)
