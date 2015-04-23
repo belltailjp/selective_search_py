@@ -27,7 +27,7 @@ static void check_image_format(const boost::numpy::ndarray& input_image)
         throw std::runtime_error("input_image must be C-style contiguous");
 }
 
-boost::numpy::ndarray segment(const boost::numpy::ndarray& input_image, float sigma, float c, int min_size)
+boost::python::tuple segment(const boost::numpy::ndarray& input_image, float sigma, float c, int min_size)
 {
     check_image_format(input_image);
 
@@ -47,10 +47,10 @@ boost::numpy::ndarray segment(const boost::numpy::ndarray& input_image, float si
     std::copy(seg_result_img->data, seg_result_img->data + w * h, reinterpret_cast<rgb*>(result_image.get_data()));
 
     delete seg_result_img;
-    return result_image;
+    return boost::python::make_tuple<boost::numpy::ndarray, int>(result_image, num_css);
 }
 
-boost::numpy::ndarray segment_label(const boost::numpy::ndarray& input_image, float sigma, float c, int min_size)
+boost::python::tuple segment_label(const boost::numpy::ndarray& input_image, float sigma, float c, int min_size)
 {
     check_image_format(input_image);
 
@@ -83,7 +83,7 @@ boost::numpy::ndarray segment_label(const boost::numpy::ndarray& input_image, fl
     }
 
     delete seg_result_img;
-    return result_label;
+    return boost::python::make_tuple<boost::numpy::ndarray, int>(result_label, num_css);
 }
 
 BOOST_PYTHON_MODULE(segment)
