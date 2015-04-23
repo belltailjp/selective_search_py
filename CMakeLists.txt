@@ -9,7 +9,7 @@ set(BOOST_LIBS "-lboost_system -lboost_python3 -lboost_numpy")
 set(SUPPRESS_WARNING "-Wall -Wno-unused-function -Wno-unused-variable -Wno-unused-local-typedefs")
 
 include_directories("segment")
-set(CMAKE_CXX_FLAGS "-fPIC -O3 ${PYTHON3_CFLAGS} ${SUPPRESS_WARNING}")
+set(CMAKE_CXX_FLAGS "-fPIC -O3 -std=c++11 ${PYTHON3_CFLAGS} ${SUPPRESS_WARNING}")
 set(CMAKE_SHARED_LINKER_FLAGS "${PYTHON3_LDFLAGS} -shared -fPIC")
 
 add_library(segment SHARED segment_py.cpp)
