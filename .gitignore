@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.so
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
