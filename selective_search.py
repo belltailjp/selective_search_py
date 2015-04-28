@@ -13,10 +13,16 @@ def calc_adjacency_matrix(label_img, n_region):
             here = label_img[y, x]
             if y < h - 1:
                 b = label_img[y + 1, x]
-                A[here, b] = A[b, here] = 1
+                if here < b:
+                    A[here, b] = 1
+                else:
+                    A[b, here] = 1
             if x < w - 1:
                 r = label_img[y, x + 1]
-                A[here, r] = A[r, here] = 1
+                if here < r:
+                    A[here, r] = 1
+                else:
+                    A[r, here] = 1
 
     dic = {i : {j for (j, Aij) in enumerate(Ai) if Aij == 1 and i != j} for (i, Ai) in enumerate(A)}
 
