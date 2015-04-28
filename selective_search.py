@@ -3,6 +3,7 @@
 
 import numpy
 import segment
+import collections
 
 def calc_adjacency_matrix(label_img, n_region):
     A = numpy.diag([1] * n_region)
@@ -17,5 +18,8 @@ def calc_adjacency_matrix(label_img, n_region):
                 r = label_img[y, x + 1]
                 A[here, r] = A[r, here] = 1
 
-    return A
+    dic = {i : {j for (j, Aij) in enumerate(Ai) if Aij == 1 and i != j} for (i, Ai) in enumerate(A)}
+
+    Adjacency = collections.namedtuple('Adjacency', ['matrix', 'dictionary'])
+    return Adjacency(matrix = A, dictionary = dic)
 
