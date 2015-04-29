@@ -60,3 +60,24 @@ class TestSelectiveSearchFeaturesSize:
         assert sizes[0] == 50
         assert sizes[1] == 50
 
+class TestSelectiveSearchFeaturesFill:
+    def setup_method(self, method):
+        self.label_img = numpy.zeros((10, 10), dtype=int)
+
+    def test_1region(self):
+        fill = selective_search_features.fill(self.label_img, 1)
+        assert fill.shape == (1, 4)
+        assert numpy.array_equal(fill[0], [0, 0, 9, 9])
+
+    def test_4region(self):
+        self.label_img[:5, :5] = 0
+        self.label_img[:5, 5:] = 1
+        self.label_img[5:, :5] = 2
+        self.label_img[5:, 5:] = 3
+        fill = selective_search_features.fill(self.label_img, 4)
+        assert fill.shape == (4, 4)
+        assert numpy.array_equal(fill[0], [0, 0, 4, 4])
+        assert numpy.array_equal(fill[1], [0, 5, 4, 9])
+        assert numpy.array_equal(fill[2], [5, 0, 9, 4])
+        assert numpy.array_equal(fill[3], [5, 5, 9, 9])
+
