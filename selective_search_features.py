@@ -17,3 +17,5 @@ def color_histgram(input_img, label_img, n_region):
     b_hist = numpy.histogram2d(label_img.ravel(), input_img[:, :, 2].ravel(), bins=bins)[0]
     return numpy.hstack([r_hist, g_hist, b_hist])
 
+def size(label_img, n_region):
+    return numpy.bincount(label_img.ravel(), minlength = n_region)

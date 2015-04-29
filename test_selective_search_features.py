@@ -36,3 +36,20 @@ class TestSelectiveSearchFeaturesColorHistogram:
         assert hist[0, 0]  == hist[0, 25] == hist[0, 50] == 1
         assert hist[1, 0]  == hist[1, 25] == hist[1, 50] == 1
 
+class TestSelectiveSearchFeaturesSize:
+    def setup_method(self, method):
+        self.label_img = numpy.zeros((10, 10), dtype=int)
+
+    def test_1region(self):
+        sizes = selective_search_features.size(self.label_img, 2)
+        assert sizes.shape == (2,)
+        assert sizes[0] == 100
+        assert sizes[1] == 0
+
+    def test_2region(self):
+        self.label_img[:5, :] = 1
+        sizes = selective_search_features.size(self.label_img, 2)
+        assert sizes.shape == (2,)
+        assert sizes[0] == 50
+        assert sizes[1] == 50
+
