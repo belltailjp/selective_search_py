@@ -13,9 +13,10 @@ class TestSelectiveSearchFeaturesColorHistogram:
     def test_1region_1color(self):
         hist = selective_search_features.color_histgram(self.input_img, self.label_img, 1)
         assert hist.shape == (1, 75)
-        assert hist[0, 0]  == 10 * 10
-        assert hist[0, 25] == 10 * 10
-        assert hist[0, 50] == 10 * 10
+        r_expected = [0.333333333] + [0] * 24
+        g_expected = [0.333333333] + [0] * 24
+        b_expected = [0.333333333] + [0] * 24
+        numpy.testing.assert_array_almost_equal(hist.ravel(), r_expected + g_expected + b_expected)
 
     def test_1region_255color(self):
         self.setup_method(self, w = 1, h = 256)
@@ -23,9 +24,12 @@ class TestSelectiveSearchFeaturesColorHistogram:
             self.input_img[y, :, :] = y
 
         hist = selective_search_features.color_histgram(self.input_img, self.label_img, 1)
-        assert hist[0, 0]  == 11    # because bin width equals 11
-        assert hist[0, 25] == 11
-        assert hist[0, 50] == 11
+        assert hist.shape == (1, 75)
+        r_expected = [11] * 23 + [3, 0] # because bin width equals 11
+        g_expected = [11] * 23 + [3, 0]
+        b_expected = [11] * 23 + [3, 0]
+        expected = numpy.array(r_expected + g_expected + b_expected)
+        numpy.testing.assert_array_almost_equal(hist.ravel(), expected / numpy.sum(expected))
 
     def test_2region_1color(self):
         self.setup_method(self, w = 1, h = 2)
@@ -33,8 +37,11 @@ class TestSelectiveSearchFeaturesColorHistogram:
             self.label_img[y, :] = y
 
         hist = selective_search_features.color_histgram(self.input_img, self.label_img, 2)
-        assert hist[0, 0]  == hist[0, 25] == hist[0, 50] == 1
-        assert hist[1, 0]  == hist[1, 25] == hist[1, 50] == 1
+        assert hist.shape == (2, 75)
+        r1_expected = ([1.0/3] + [0] * 24) + ([1.0/3] + [0] * 24) + ([1.0/3] + [0] * 24)
+        r2_expected = ([1.0/3] + [0] * 24) + ([1.0/3] + [0] * 24) + ([1.0/3] + [0] * 24)
+        numpy.testing.assert_array_almost_equal(hist[0].ravel(), r1_expected)
+        numpy.testing.assert_array_almost_equal(hist[1].ravel(), r2_expected)
 
 class TestSelectiveSearchFeaturesSize:
     def setup_method(self, method):

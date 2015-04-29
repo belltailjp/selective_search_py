@@ -15,7 +15,10 @@ def color_histgram(input_img, label_img, n_region):
     r_hist = numpy.histogram2d(label_img.ravel(), input_img[:, :, 0].ravel(), bins=bins)[0] #shape=(n_region, n_bin)
     g_hist = numpy.histogram2d(label_img.ravel(), input_img[:, :, 1].ravel(), bins=bins)[0]
     b_hist = numpy.histogram2d(label_img.ravel(), input_img[:, :, 2].ravel(), bins=bins)[0]
-    return numpy.hstack([r_hist, g_hist, b_hist])
+    hist = numpy.hstack([r_hist, g_hist, b_hist])
+    l1_norm = numpy.sum(hist, axis = 1).reshape((n_region, 1))
+
+    return numpy.nan_to_num(hist / l1_norm)
 
 def size(label_img, n_region):
     return numpy.bincount(label_img.ravel(), minlength = n_region)
