@@ -34,7 +34,7 @@ def fill(label_img, n_region):
 
     return B
 
-def gradient_histogram(label_img, gaussian, n_region, nbins_orientation = 8, nbins_inten = 10):
+def __gradient_histogram(label_img, gaussian, n_region, nbins_orientation = 8, nbins_inten = 10):
     op = numpy.array([[-1, 0, 1]], dtype=numpy.float32)
     h = scipy.ndimage.filters.convolve(gaussian, op)
     v = scipy.ndimage.filters.convolve(gaussian, op.transpose())
@@ -56,9 +56,9 @@ def gradient_histogram(label_img, gaussian, n_region, nbins_orientation = 8, nbi
 
 def texture(input_img, label_img, n_region):
     gaussian = skimage.filters.gaussian_filter(input_img, sigma = 1.0, multichannel = True).astype(numpy.float32)
-    r_hist = gradient_histogram(label_img, gaussian[:, :, 0], n_region)
-    g_hist = gradient_histogram(label_img, gaussian[:, :, 1], n_region)
-    b_hist = gradient_histogram(label_img, gaussian[:, :, 2], n_region)
+    r_hist = __gradient_histogram(label_img, gaussian[:, :, 0], n_region)
+    g_hist = __gradient_histogram(label_img, gaussian[:, :, 1], n_region)
+    b_hist = __gradient_histogram(label_img, gaussian[:, :, 2], n_region)
 
     hist = numpy.hstack([r_hist, g_hist, b_hist])
     l1_norm = numpy.sum(hist, axis = 1).reshape((n_region, 1))
