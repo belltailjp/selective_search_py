@@ -34,22 +34,31 @@ def fill(label_img, n_region):
 
     return B
 
-def gradient_histogram(label_img, gaussian, n_region, n_bin):
-    h = scipy.ndimage.filters.convolve(gaussian, [[-1, 0, 1]])
-    v = scipy.ndimage.filters.convolve(gaussian, [[-1], [0], [-1]])
-    m = numpy.sqrt(h ** 2 + v ** 2)
+def gradient_histogram(label_img, gaussian, n_region, nbins_orientation = 8, nbins_inten = 10):
+    op = numpy.array([[-1, 0, 1]], dtype=numpy.float32)
+    h = scipy.ndimage.filters.convolve(gaussian, op)
+    v = scipy.ndimage.filters.convolve(gaussian, op.transpose())
     g = numpy.arctan2(v, h)
 
-    bin_width = 2 * math.pi / n_bin
-    bins_angle = numpy.arange(-math.pi, math.pi + bin_width, bin_width)
+    # define each axis for texture histogram
+    bin_width = 2 * math.pi / 8
     bins_label = range(n_region + 1)
-    return numpy.histogram2d(label_img.ravel(), g.ravel(), bins=[bins_label, bins_angle], weights = m.ravel())[0]
+    bins_angle = numpy.linspace(-math.pi, math.pi, nbins_orientation + 1)
+    bins_inten = numpy.linspace(.0, 1., nbins_inten + 1)
+    bins = [bins_label, bins_angle, bins_inten]
+
+    # calculate 3 dimensional histogram
+    ar = numpy.vstack([label_img.ravel(), g.ravel(), gaussian.ravel()]).transpose()
+    hist = numpy.histogramdd(ar, bins = bins)[0]
+
+    # orientation_wise intensity histograms are serialized for each region
+    return numpy.reshape(hist, (n_region, nbins_orientation * nbins_inten))
 
 def texture(input_img, label_img, n_region):
     gaussian = skimage.filters.gaussian_filter(input_img, sigma = 1.0, multichannel = True).astype(numpy.float32)
-    r_hist = gradient_histogram(label_img, gaussian[:, :, 0], n_region, 10)
-    g_hist = gradient_histogram(label_img, gaussian[:, :, 1], n_region, 10)
-    b_hist = gradient_histogram(label_img, gaussian[:, :, 2], n_region, 10)
+    r_hist = gradient_histogram(label_img, gaussian[:, :, 0], n_region)
+    g_hist = gradient_histogram(label_img, gaussian[:, :, 1], n_region)
+    b_hist = gradient_histogram(label_img, gaussian[:, :, 2], n_region)
 
     hist = numpy.hstack([r_hist, g_hist, b_hist])
     l1_norm = numpy.sum(hist, axis = 1).reshape((n_region, 1))
