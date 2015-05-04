@@ -23,16 +23,19 @@ def color_histgram(input_img, label_img, n_region):
 
     return numpy.nan_to_num(hist / l1_norm)
 
+
 def size(label_img, n_region):
     return numpy.bincount(label_img.ravel(), minlength = n_region)
 
-def fill(label_img, n_region):
+
+def bounding_box(label_img, n_region):
     B = numpy.full((n_region, 4), fill_value = float('NaN'))
     for ((i, j), label) in numpy.ndenumerate(label_img):
         (i1, j1, i2, j2) = B[label]
         B[label] = min(i, i1), min(j, j1), max(i, i2), max(j, j2)
 
     return B
+
 
 def __gradient_histogram(label_img, gaussian, n_region, nbins_orientation = 8, nbins_inten = 10):
     op = numpy.array([[-1, 0, 1]], dtype=numpy.float32)
