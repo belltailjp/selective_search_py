@@ -12,3 +12,5 @@ def __histogram_intersection(vec1, vec2):
 def color(hist1, hist2):
     return __histogram_intersection(hist1, hist2)
 
+def texture(tex1, tex2):
+    return __histogram_intersection(tex1, tex2)

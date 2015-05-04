@@ -29,3 +29,11 @@ class TestSimilarityColor:
         assert t.shape == (5, )
         assert numpy.array_equal(t, [0, 75, 150, 225, 300])
 
+class TestSimilarityColor:
+    def test_multiregion(self):
+        ar1 = numpy.array([[i * 2] * 240 for i in range(5)])
+        ar2 = numpy.array([[i]     * 240 for i in range(5)])
+        t = similarity.color(ar1, ar2)
+        assert t.shape == (5, )
+        assert numpy.array_equal(t, [0, 240, 240 * 2, 240 * 3, 240 * 4])
+
