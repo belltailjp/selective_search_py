@@ -9,7 +9,7 @@ class TestFeaturesColorHistogram:
         self.h, self.w = h, w
         image = numpy.zeros((self.h, self.w, 3), dtype=numpy.uint8)
         label = numpy.zeros((self.h, self.w), dtype=int)
-        self.f = features.Features(image, label, 1, None)
+        self.f = features.Features(image, label, 1)
 
     def test_1region_1color(self):
         hist = self.f._Features__init_color(1)
@@ -52,7 +52,7 @@ class TestFeaturesSize:
     def setup_method(self, method):
         image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(image, label, 1, None)
+        self.f = features.Features(image, label, 1)
 
     def test_1region(self):
         sizes = self.f._Features__init_size(1)
@@ -70,7 +70,7 @@ class TestFeaturesBoundingBox:
     def setup_method(self, method):
         image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(image, label, 1, None)
+        self.f = features.Features(image, label, 1)
 
     def test_1region(self):
         bb = self.f._Features__init_bounding_box(1)

@@ -8,7 +8,7 @@ class TestSimilaritySize:
     def setup_method(self, method):
         dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         dummy_label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(dummy_image, dummy_label, 1, None)
+        self.f = features.Features(dummy_image, dummy_label, 1)
 
     def test_similarity_size(self):
         self.f.size = {0 : 10, 1 : 20}
@@ -20,7 +20,7 @@ class TestSimilarityColor:
     def setup_method(self, method):
         dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         dummy_label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(dummy_image, dummy_label, 1, None)
+        self.f = features.Features(dummy_image, dummy_label, 1)
 
     def test_simple(self):
         self.f.color[0] = numpy.array([1] * 75)
@@ -39,7 +39,7 @@ class TestSimilarityTexture:
     def setup_method(self, method):
         dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         dummy_label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(dummy_image, dummy_label, 1, None)
+        self.f = features.Features(dummy_image, dummy_label, 1)
 
     def test_complex(self):
         # build 240-dimensional arrays as texture histogram
@@ -52,7 +52,7 @@ class TestSimilarityFill:
     def setup_method(self, method):
         dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
         dummy_label = numpy.zeros((10, 10), dtype=int)
-        self.f = features.Features(dummy_image, dummy_label, 1, None)
+        self.f = features.Features(dummy_image, dummy_label, 1)
 
     def test_value(self):
         self.f.bbox[0] = numpy.array([10, 10, 20, 20])

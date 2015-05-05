@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import collections
 import math
 import numpy
 import skimage
 import skimage.filters
 import scipy.ndimage.filters
 
+SimilarityWeight = collections.namedtuple("SimilarityWeight", ["size", "color", "texture", "fill"])
+
 class Features:
-    def __init__(self, image, label, n_region, similarity_weight):
+    def __init__(self, image, label, n_region, similarity_weight = SimilarityWeight(1, 1, 1, 1)):
         self.image = image
         self.label = label
         self.w     = similarity_weight
@@ -101,4 +104,10 @@ class Features:
         (bij0, bij1, bij2, bij3) = min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3)
         bij_size = (bij2 - bij0) * (bij3 - bij1)
         return 1. - (bij_size - self.size[i] - self.size[j]) / self.imsize
+
+    def similarity(self, i, j):
+        return self.w.size * self.__sim_size(i, j) + \
+               self.w.texture * self.__sim_texture(i, j) + \
+               self.w.color * self.__sim_color(i, j) + \
+               self.w.fill * self.__sim_fill(i, j)
 
