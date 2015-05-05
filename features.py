@@ -44,11 +44,11 @@ class Features:
         return {i : hist[i] for i in range(n_region)}
 
     def __init_bounding_box(self, n_region):
-        B = numpy.full((n_region, 4), fill_value = float('NaN'))
-        for ((i, j), idx) in numpy.ndenumerate(self.label):
-            (i1, j1, i2, j2) = B[idx]
-            B[idx] = min(i, i1), min(j, j1), max(i, i2), max(j, j2)
-        return {i : B[i] for i in range(n_region)}
+        bbox = dict()
+        for region in range(n_region):
+            I, J = numpy.where(self.label == region)
+            bbox[region] = numpy.array([min(I), min(J), max(I), max(J)])
+        return bbox
 
     def __init_texture(self, n_region):
         ar = numpy.ndarray((n_region, 240))
