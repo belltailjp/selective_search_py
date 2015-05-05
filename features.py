@@ -111,3 +111,7 @@ class Features:
                self.w.color * self.__sim_color(i, j) + \
                self.w.fill * self.__sim_fill(i, j)
 
+
+    def __merge_size(self, i, j, new_region_id):
+        self.size[new_region_id] = self.size[i] + self.size[j]
+
