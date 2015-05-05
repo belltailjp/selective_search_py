@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy
-import similarity
 import features
 
 class TestSimilaritySize:
