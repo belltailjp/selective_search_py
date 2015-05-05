@@ -121,3 +121,6 @@ class Features:
     def __merge_color(self, i, j, new_region_id):
         self.color[new_region_id] = self.__histogram_merge(self.color[i], self.color[j], self.size[i], self.size[j])
 
+    def __merge_texture(self, i, j, new_region_id):
+        self.texture[new_region_id] = self.__histogram_merge(self.texture[i], self.texture[j], self.size[i], self.size[j])
+
