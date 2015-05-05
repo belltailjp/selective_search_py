@@ -188,7 +188,7 @@ class TestMerge:
         self.f.color   = {0: numpy.array([1.] * 75), 1: numpy.array([2.] * 75)}
         self.f.texture = {0: numpy.array([1.] * 240), 1: numpy.array([2.] * 240)}
         self.f.bbox    = {0: numpy.array([10, 10, 20, 20]), 1: numpy.array([20, 20, 30, 30])}
-        self.f.merge(0, 1)
+        assert self.f.merge(0, 1) == 2
         assert len(self.f.size) == 3
         assert len(self.f.color) == 3
         assert len(self.f.texture) == 3

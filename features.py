@@ -134,4 +134,5 @@ class Features:
         self.__merge_color(i, j, new_region_id)
         self.__merge_texture(i, j, new_region_id)
         self.__merge_bbox(i, j, new_region_id)
+        return new_region_id
 
