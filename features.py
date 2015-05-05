@@ -115,3 +115,9 @@ class Features:
     def __merge_size(self, i, j, new_region_id):
         self.size[new_region_id] = self.size[i] + self.size[j]
 
+    def __histogram_merge(self, vec1, vec2, w1, w2):
+        return (w1 * vec1 + w2 * vec2) / (w1 + w2)
+
+    def __merge_color(self, i, j, new_region_id):
+        self.color[new_region_id] = self.__histogram_merge(self.color[i], self.color[j], self.size[i], self.size[j])
+
