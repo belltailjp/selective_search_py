@@ -3,37 +3,49 @@
 
 import numpy
 import similarity
+import features
 
 class TestSimilaritySize:
-    def test_type(self):
-        ret = similarity.size(int(10), int(10), int(1))
-        assert type(ret) == float
+    def setup_method(self, method):
+        dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
+        dummy_label = numpy.zeros((10, 10), dtype=int)
+        self.f = features.Features(dummy_image, dummy_label, 1, None)
 
-    def test_value(self):
-        ret = similarity.size(10, 20, 100)
-        assert ret == 0.7
+    def test_similarity_size(self):
+        self.f.size = {0 : 10, 1 : 20}
 
-class TestSimilarityColor:
-    def test_1region(self):
-        ar1 = numpy.array([[1] * 75])
-        ar2 = numpy.array([[2] * 75])
-        t = similarity.color(ar1, ar2)
-        assert t.shape == (1, )
-        assert numpy.array_equal(t, [75])
-
-    def test_multiregion(self):
-        # build (5, 75) array whose i-th row is filled with i (or 2i)
-        ar1 = numpy.array([[i * 2] * 75 for i in range(5)])
-        ar2 = numpy.array([[i]     * 75 for i in range(5)])
-        t = similarity.color(ar1, ar2)
-        assert t.shape == (5, )
-        assert numpy.array_equal(t, [0, 75, 150, 225, 300])
+        s = self.f._Features__sim_size(0, 1)
+        assert s == 0.7
 
 class TestSimilarityColor:
-    def test_multiregion(self):
-        ar1 = numpy.array([[i * 2] * 240 for i in range(5)])
-        ar2 = numpy.array([[i]     * 240 for i in range(5)])
-        t = similarity.color(ar1, ar2)
-        assert t.shape == (5, )
-        assert numpy.array_equal(t, [0, 240, 240 * 2, 240 * 3, 240 * 4])
+    def setup_method(self, method):
+        dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
+        dummy_label = numpy.zeros((10, 10), dtype=int)
+        self.f = features.Features(dummy_image, dummy_label, 1, None)
+
+    def test_simple(self):
+        self.f.color[0] = numpy.array([1] * 75)
+        self.f.color[1] = numpy.array([2] * 75)
+        s = self.f._Features__sim_color(0, 1)
+        assert s == 75
+
+    def test_complex(self):
+        # build 75-dimensional arrays as color histogram
+        self.f.color[0] = numpy.array([1, 2, 1, 2, 1] * 15)
+        self.f.color[1] = numpy.array([2, 1, 2, 1, 2] * 15)
+        s = self.f._Features__sim_color(0, 1)
+        assert s == 75
+
+class TestSimilarityTexture:
+    def setup_method(self, method):
+        dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
+        dummy_label = numpy.zeros((10, 10), dtype=int)
+        self.f = features.Features(dummy_image, dummy_label, 1, None)
+
+    def test_complex(self):
+        # build 240-dimensional arrays as texture histogram
+        self.f.texture[0] = numpy.array([1, 2, 1, 2, 1, 2] * 40)
+        self.f.texture[1] = numpy.array([2, 1, 2, 1, 2, 1] * 40)
+        s = self.f._Features__sim_texture(0, 1)
+        assert s == 240
 

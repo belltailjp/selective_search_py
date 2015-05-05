@@ -83,3 +83,16 @@ class Features:
         hist = numpy.nan_to_num(hist / l1_norm)
         return {i : hist[i] for i in range(n_region)}
 
+
+    def __sim_size(self, i, j):
+        return 1. - (self.size[i] + self.size[j]) / self.imsize
+
+    def __calc_histogram_intersection(self, vec1, vec2):
+        return numpy.sum(numpy.minimum(vec1, vec2))
+
+    def __sim_texture(self, i, j):
+        return self.__calc_histogram_intersection(self.texture[i], self.texture[j])
+
+    def __sim_color(self, i, j):
+        return self.__calc_histogram_intersection(self.color[i], self.color[j])
+
