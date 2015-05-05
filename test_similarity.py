@@ -62,3 +62,17 @@ class TestSimilarityFill:
         s = self.f._Features__sim_fill(0, 1)
         assert s == 1. - float(400 - 200) / 100
 
+class TestSimilarity:
+    def setup_method(self, method):
+        self.dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
+        self.dummy_label = numpy.zeros((10, 10), dtype=int)
+
+    def test_use_all(self, monkeypatch):
+        monkeypatch.setattr(features.Features, '_Features__sim_size',   lambda self, i, j: 1)
+        monkeypatch.setattr(features.Features, '_Features__sim_texture',lambda self, i, j: 1)
+        monkeypatch.setattr(features.Features, '_Features__sim_color',  lambda self, i, j: 1)
+        monkeypatch.setattr(features.Features, '_Features__sim_fill',   lambda self, i, j: 1)
+        w = features.SimilarityWeight(1, 1, 1, 1)
+        f = features.Features(self.dummy_image, self.dummy_label, 1, w)
+        assert f.similarity(0, 1) == 4
+
