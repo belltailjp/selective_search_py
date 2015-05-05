@@ -35,3 +35,13 @@ class TestMerge:
         expected = (100 * 1. + 50 * 2.) / (100 + 50)
         assert numpy.array_equal(self.f.texture[2], [expected] * 240)
 
+    def test_merge_bbox(self):
+        self.f.bbox[0] = numpy.array([10, 10, 20, 20])
+        self.f.size[0] = 100
+        self.f.bbox[1] = numpy.array([20, 20, 30, 30])
+        self.f.size[1] = 50
+        self.f.imsize  = 1000
+        self.f._Features__merge_bbox(0, 1, 2)
+
+        assert numpy.array_equal(self.f.bbox[2], [10, 10, 30, 30])
+

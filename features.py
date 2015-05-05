@@ -124,3 +124,7 @@ class Features:
     def __merge_texture(self, i, j, new_region_id):
         self.texture[new_region_id] = self.__histogram_merge(self.texture[i], self.texture[j], self.size[i], self.size[j])
 
+    def __merge_bbox(self, i, j, new_region_id):
+        (bi0, bi1, bi2, bi3), (bj0, bj1, bj2, bj3) = self.bbox[i], self.bbox[j]
+        self.bbox[new_region_id] = numpy.array([min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3)])
+
