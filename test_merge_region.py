@@ -45,3 +45,15 @@ class TestMerge:
 
         assert numpy.array_equal(self.f.bbox[2], [10, 10, 30, 30])
 
+    def test_merge(self):
+        self.f.imsize  = 1000
+        self.f.size    = {0: 10, 1: 20}
+        self.f.color   = {0: numpy.array([1.] * 75), 1: numpy.array([2.] * 75)}
+        self.f.texture = {0: numpy.array([1.] * 240), 1: numpy.array([2.] * 240)}
+        self.f.bbox    = {0: numpy.array([10, 10, 20, 20]), 1: numpy.array([20, 20, 30, 30])}
+        self.f.merge(0, 1)
+        assert len(self.f.size) == 3
+        assert len(self.f.color) == 3
+        assert len(self.f.texture) == 3
+        assert len(self.f.bbox) == 3
+

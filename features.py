@@ -128,3 +128,10 @@ class Features:
         (bi0, bi1, bi2, bi3), (bj0, bj1, bj2, bj3) = self.bbox[i], self.bbox[j]
         self.bbox[new_region_id] = numpy.array([min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3)])
 
+    def merge(self, i, j):
+        new_region_id = len(self.size)
+        self.__merge_size(i, j, new_region_id)
+        self.__merge_color(i, j, new_region_id)
+        self.__merge_texture(i, j, new_region_id)
+        self.__merge_bbox(i, j, new_region_id)
+
