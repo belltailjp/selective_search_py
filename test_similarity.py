@@ -49,3 +49,17 @@ class TestSimilarityTexture:
         s = self.f._Features__sim_texture(0, 1)
         assert s == 240
 
+class TestSimilarityFill:
+    def setup_method(self, method):
+        dummy_image = numpy.zeros((10, 10, 3), dtype=numpy.uint8)
+        dummy_label = numpy.zeros((10, 10), dtype=int)
+        self.f = features.Features(dummy_image, dummy_label, 1, None)
+
+    def test_value(self):
+        self.f.bbox[0] = numpy.array([10, 10, 20, 20])
+        self.f.size[0] = 100
+        self.f.bbox[1] = numpy.array([20, 20, 30, 30])
+        self.f.size[1] = 100
+        s = self.f._Features__sim_fill(0, 1)
+        assert s == 1. - float(400 - 200) / 100
+

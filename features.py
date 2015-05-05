@@ -96,3 +96,9 @@ class Features:
     def __sim_color(self, i, j):
         return self.__calc_histogram_intersection(self.color[i], self.color[j])
 
+    def __sim_fill(self, i, j):
+        (bi0, bi1, bi2, bi3), (bj0, bj1, bj2, bj3) = self.bbox[i], self.bbox[j]
+        (bij0, bij1, bij2, bij3) = min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3)
+        bij_size = (bij2 - bij0) * (bij3 - bij1)
+        return 1. - (bij_size - self.size[i] - self.size[j]) / self.imsize
+
