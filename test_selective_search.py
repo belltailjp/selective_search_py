@@ -16,7 +16,7 @@ class TestCalcAdjecencyMatrix:
         # 0, 0, 0, 0
         # 0, 0, 0, 0
         # 0, 0, 0, 0
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 1)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 1)
         assert type(adj_mat) == numpy.ndarray
         assert adj_mat.shape == (1, 1) and adj_mat.dtype == bool
         assert adj_mat[0, 0] == True
@@ -31,7 +31,7 @@ class TestCalcAdjecencyMatrix:
         expected_mat = numpy.array([[True, True],\
                                     [True, True]])
 
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 2)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 2)
         assert adj_mat.shape == (2, 2) and adj_mat.dtype == bool
         assert numpy.array_equal(adj_mat, expected_mat)
         assert adj_dic[0] == {1}
@@ -51,7 +51,7 @@ class TestCalcAdjecencyMatrix:
                                     [True, False, True, True],\
                                     [False, True, True, True]])
 
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 4)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 4)
         assert numpy.diag(adj_mat).all()
         assert numpy.array_equal(adj_mat.transpose(), adj_mat)
         assert numpy.array_equal(adj_mat, expected_mat)
@@ -72,7 +72,7 @@ class TestCalcAdjecencyMatrix:
                                     [True, True, True],\
                                     [True, True, True]])
 
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 3)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 3)
         assert numpy.array_equal(expected_mat, adj_mat)
         assert adj_dic[0] == {1, 2}
         assert adj_dic[1] == {0, 2}
@@ -89,7 +89,7 @@ class TestCalcAdjecencyMatrix:
                                     [True, True, True],\
                                     [True, True, True]])
 
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 3)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 3)
         assert numpy.array_equal(expected_mat, adj_mat)
         assert adj_dic[0] == {1, 2}
         assert adj_dic[1] == {0, 2}
@@ -101,7 +101,7 @@ class TestCalcAdjecencyMatrix:
         # 8, 9,10,11
         #12,13,14,15
         self.label = numpy.array(range(16)).reshape((4,4))
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 16)
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 16)
         assert numpy.array_equal(adj_mat.transpose(), adj_mat)
         assert set(numpy.flatnonzero(adj_mat[ 0])) == { 0,  1,  4}
         assert set(numpy.flatnonzero(adj_mat[ 1])) == { 0,  1,  2,  5}

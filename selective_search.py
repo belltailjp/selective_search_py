@@ -6,7 +6,7 @@ import scipy.sparse
 import segment
 import collections
 
-def calc_adjacency_matrix(label_img, n_region):
+def _calc_adjacency_matrix(label_img, n_region):
     r = numpy.vstack([label_img[:, :-1].ravel(), label_img[:, 1:].ravel()])
     b = numpy.vstack([label_img[:-1, :].ravel(), label_img[1:, :].ravel()])
     t = numpy.hstack([r, b])
