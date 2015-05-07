@@ -41,3 +41,12 @@ def _new_label_image(L, i, j, t):
     Lk[Lk == i] = Lk[Lk == j] = t
     return Lk
 
+def _build_initial_similarity_set(A0, feature_extractor):
+    S = list()
+    for (i, J) in A0.items():
+        for j in J:
+            if i < j:
+                S.append((feature_extractor.similarity(i, j), i, j))
+
+    return sorted(S)
+

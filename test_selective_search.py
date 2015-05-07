@@ -186,3 +186,31 @@ class TestNewLabel:
         Lk_actual = selective_search._new_label_image(self.L, 2, 3, 6)
         assert numpy.array_equal(self.Lk, Lk_actual)
 
+
+class TestBuildInitialSimilaritySet:
+    def setup_method(self, method):
+        class stub_feature_extractor:
+            def similarity(self, i, j):
+                return i + j    # Dummy similarity.
+        self.feature_extractor = stub_feature_extractor()
+
+        # 0011
+        # 2233
+        self.A0 = {0: {1, 2}, 1: {0, 3}, 2: {0, 3}, 3: {1, 2}}
+
+    def test_valie(self):
+        # each line: sim, i, j (where sim=i+j in this test)
+        # commented out lines: i should be smaller than j
+        expected = [(1, 0, 1),\
+                   #(1, 1, 0),\
+                    (2, 0, 2),\
+                   #(2, 2, 0),\
+                    (4, 1, 3),\
+                   #(4, 3, 1),\
+                    (5, 2, 3),\
+                   #(5, 3, 2)
+                    ]
+
+        S = selective_search._build_initial_similarity_set(self.A0, self.feature_extractor)
+        assert S == expected
+
