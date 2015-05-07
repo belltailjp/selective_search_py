@@ -9,70 +9,117 @@ import selective_search
 
 class TestCalcAdjecencyMatrix:
     def setup_method(self, method):
-        self.label = numpy.zeros((10, 10), dtype=int)
+        self.label = numpy.zeros((4, 4), dtype=int)
 
     def test_only_1_segment(self):
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 1)
+        # 0, 0, 0, 0
+        # 0, 0, 0, 0
+        # 0, 0, 0, 0
+        # 0, 0, 0, 0
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 1)
+        assert type(adj_mat) == numpy.ndarray
         assert adj_mat.shape == (1, 1) and adj_mat.dtype == bool
         assert adj_mat[0, 0] == True
         assert adj_dic[0] == set()
 
     def test_fully_adjacent(self):
-        self.label[:5, :] = 1
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 2)
+        # 1, 1, 0, 0
+        # 1, 1, 0, 0
+        # 1, 1, 0, 0
+        # 1, 1, 0, 0
+        self.label[:2, :] = 1
+        expected_mat = numpy.array([[True, True],\
+                                    [True, True]])
+
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 2)
         assert adj_mat.shape == (2, 2) and adj_mat.dtype == bool
-        assert numpy.array_equal(adj_mat, numpy.array([[1, 1], [0, 1]], dtype=bool))
+        assert numpy.array_equal(adj_mat, expected_mat)
         assert adj_dic[0] == {1}
-        assert adj_dic[1] == set()
+        assert adj_dic[1] == {0}
 
     def test_partially_adjacent(self):
-        #make checker pattern
-        self.label[:5, :5] = lu = 0
-        self.label[:5, 5:] = ru = 1
-        self.label[5:, :5] = lb = 2
-        self.label[5:, 5:] = rb = 3
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 4)
-        assert adj_mat.shape == (4, 4) and adj_mat.dtype == bool
-        assert numpy.array_equal(numpy.diag(adj_mat), numpy.array([1, 1, 1, 1], dtype=bool))
-        assert numpy.array_equal(numpy.triu(adj_mat), adj_mat)
-        assert adj_mat[lu, ru] == adj_mat[lu, lb] == adj_mat[ru, rb] == adj_mat[lb, rb] == True
-        assert adj_mat[lu, rb] == adj_mat[ru, lb] == False
-        assert adj_dic[lu] == {ru, lb}
-        assert adj_dic[ru] == {rb}
-        assert adj_dic[lb] == {rb}
-        assert adj_dic[rb] == set()
+        # 0, 0, 1, 1
+        # 0, 0, 1, 1
+        # 2, 2, 3, 3
+        # 2, 2, 3, 3
+        self.label[:2, :2] = 0
+        self.label[:2, 2:] = 1
+        self.label[2:, :2] = 2
+        self.label[2:, 2:] = 3
+        expected_mat = numpy.array([[True, True, True, False],\
+                                    [True, True, False, True],\
+                                    [True, False, True, True],\
+                                    [False, True, True, True]])
+
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 4)
+        assert numpy.diag(adj_mat).all()
+        assert numpy.array_equal(adj_mat.transpose(), adj_mat)
+        assert numpy.array_equal(adj_mat, expected_mat)
+
+        assert adj_dic[0] == {1, 2}
+        assert adj_dic[1] == {0, 3}
+        assert adj_dic[2] == {0, 3}
+        assert adj_dic[3] == {1, 2}
 
     def test_edge_case_vertical(self):
-        self.label[:5, -1:] = 1
-        self.label[5:, -1:] = 2
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 3)
-        assert numpy.array_equal(numpy.triu(adj_mat), adj_mat)
-        assert adj_mat[0, 1] == adj_mat[0, 2] == True
-        assert adj_mat[1, 2] == True
+        # 0, 0, 0, 1
+        # 0, 0, 0, 1
+        # 0, 0, 0, 2
+        # 0, 0, 0, 2
+        self.label[:2, -1:] = 1
+        self.label[2:, -1:] = 2
+        expected_mat = numpy.array([[True, True, True],\
+                                    [True, True, True],\
+                                    [True, True, True]])
+
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 3)
+        assert numpy.array_equal(expected_mat, adj_mat)
         assert adj_dic[0] == {1, 2}
-        assert adj_dic[1] == {2}
-        assert adj_dic[2] == set()
+        assert adj_dic[1] == {0, 2}
+        assert adj_dic[2] == {0, 1}
 
     def test_edge_case_horizontal(self):
-        self.label[-1:, :5] = 1
-        self.label[-1:, 5:] = 2
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 3)
-        assert numpy.array_equal(numpy.triu(adj_mat), adj_mat)
-        assert adj_mat[0, 1] == adj_mat[0, 2] == True
-        assert adj_mat[1, 2] == True
+        # 0, 0, 0, 0
+        # 0, 0, 0, 0
+        # 0, 0, 0, 0
+        # 1, 1, 2, 2
+        self.label[-1:, :2] = 1
+        self.label[-1:, 2:] = 2
+        expected_mat = numpy.array([[True, True, True],\
+                                    [True, True, True],\
+                                    [True, True, True]])
+
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 3)
+        assert numpy.array_equal(expected_mat, adj_mat)
         assert adj_dic[0] == {1, 2}
-        assert adj_dic[1] == {2}
-        assert adj_dic[2] == set()
+        assert adj_dic[1] == {0, 2}
+        assert adj_dic[2] == {0, 1}
 
     def test_extreme_example(self):
-        # create label matrix like multiplication table
-        self.label = numpy.array([[(i * 10 + j) for j in range(10)] for i in range(10)], dtype=int)
-        (adj_mat, adj_dic) = selective_search.calc_adjacency_matrix(self.label, 100)
-        assert numpy.array_equal(numpy.triu(adj_mat), adj_mat)
-        for i in range(100):
-            for j in range(100):
-                if (i <= j) and ((i == j) or (i == j - 1 and j % 10 != 0) or (i == j - 10)):
-                    assert adj_mat[i, j] == True
-                else:
-                    assert adj_mat[i, j] == False
+        # 0, 1, 2, 3
+        # 4, 5, 6, 7
+        # 8, 9,10,11
+        #12,13,14,15
+        self.label = numpy.array(range(16)).reshape((4,4))
+        (adj_mat, adj_dic) = selective_search._calc_adjacency_matrix(self.label, 16)
+        assert numpy.array_equal(adj_mat.transpose(), adj_mat)
+        assert set(numpy.flatnonzero(adj_mat[ 0])) == { 0,  1,  4}
+        assert set(numpy.flatnonzero(adj_mat[ 1])) == { 0,  1,  2,  5}
+        assert set(numpy.flatnonzero(adj_mat[ 2])) == { 1,  2,  3,  6}
+        assert set(numpy.flatnonzero(adj_mat[ 3])) == { 2,  3,  7} 
+        assert set(numpy.flatnonzero(adj_mat[ 4])) == { 0,  4,  5,  8}
+        assert set(numpy.flatnonzero(adj_mat[ 5])) == { 1,  4,  5,  6,  9}
+        assert set(numpy.flatnonzero(adj_mat[ 6])) == { 2,  5,  6,  7, 10}
+        assert set(numpy.flatnonzero(adj_mat[ 7])) == { 3,  6,  7, 11}
+        assert set(numpy.flatnonzero(adj_mat[ 8])) == { 4,  8,  9, 12}
+        assert set(numpy.flatnonzero(adj_mat[ 9])) == { 5,  8,  9, 10, 13}
+        assert set(numpy.flatnonzero(adj_mat[10])) == { 6,  9, 10, 11, 14}
+        assert set(numpy.flatnonzero(adj_mat[11])) == { 7, 10, 11, 15} 
+        assert set(numpy.flatnonzero(adj_mat[12])) == { 8, 12, 13}
+        assert set(numpy.flatnonzero(adj_mat[13])) == { 9, 12, 13, 14}
+        assert set(numpy.flatnonzero(adj_mat[14])) == {10, 13, 14, 15}
+        assert set(numpy.flatnonzero(adj_mat[15])) == {11, 14, 15}
+
+        for (i, adj_labels) in adj_dic.items():
+            assert set(numpy.flatnonzero(adj_mat[i])) - {i} == adj_labels
 
