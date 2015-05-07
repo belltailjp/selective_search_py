@@ -123,3 +123,45 @@ class TestCalcAdjecencyMatrix:
         for (i, adj_labels) in adj_dic.items():
             assert set(numpy.flatnonzero(adj_mat[i])) - {i} == adj_labels
 
+
+class TestNewAdjacencyDict:
+    def setup_method(self, method):
+        # from:
+        #   000000
+        #   122334
+        #   122334
+        #   555555
+        # to:
+        #   000000
+        #   166664
+        #   166664
+        #   555555
+        self.A = {0: {1, 2, 3, 4},\
+                  1: {0, 2, 5},\
+                  2: {0, 1, 3, 5},\
+                  3: {0, 2, 4, 5},\
+                  4: {0, 3, 5},\
+                  5: {1, 2, 3, 4}}
+
+    def test_exclusiveness(self):
+        """
+        It should never violate source dictionary A
+        """
+        assert self.A[0] == {1, 2, 3, 4}
+        assert self.A[1] == {0, 2, 5}
+        assert self.A[2] == {0, 1, 3, 5}
+        assert self.A[3] == {0, 2, 4, 5}
+        assert self.A[4] == {0, 3, 5}
+        assert self.A[5] == {1, 2, 3, 4}
+        assert 6 not in self.A
+
+    def test_label(self):
+        Ak = selective_search._new_adjacency_dict(self.A, 2, 3, 6)
+        assert 2 not in Ak
+        assert 3 not in Ak
+        assert Ak[0] == {1, 4, 6}
+        assert Ak[1] == {0, 5, 6}
+        assert Ak[4] == {0, 5, 6}
+        assert Ak[5] == {1, 4, 6}
+        assert Ak[6] == {0, 1, 4, 5}
+

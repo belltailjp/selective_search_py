@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
 import numpy
 import scipy.sparse
 import segment
@@ -20,4 +21,18 @@ def _calc_adjacency_matrix(label_img, n_region):
 
     Adjacency = collections.namedtuple('Adjacency', ['matrix', 'dictionary'])
     return Adjacency(matrix = A, dictionary = dic)
+
+def _new_adjacency_dict(A, i, j, t):
+    Ak = copy.deepcopy(A)
+    Ak[t] = (Ak[i] | Ak[j]) - {i, j}
+    del Ak[i], Ak[j]
+    for (p, Q) in Ak.items():
+        if i in Q:
+            Q.remove(i)
+            Q.add(t)
+        if j in Q:
+            Q.remove(j)
+            Q.add(t)
+
+    return Ak
 
