@@ -46,7 +46,7 @@ def _build_initial_similarity_set(A0, feature_extractor):
     for (i, J) in A0.items():
         for j in J:
             if i < j:
-                S.append((feature_extractor.similarity(i, j), i, j))
+                S.append((feature_extractor.similarity(i, j), (i, j)))
 
     return sorted(S)
 
