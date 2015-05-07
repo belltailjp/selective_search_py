@@ -36,3 +36,8 @@ def _new_adjacency_dict(A, i, j, t):
 
     return Ak
 
+def _new_label_image(L, i, j, t):
+    Lk = numpy.copy(L)
+    Lk[Lk == i] = Lk[Lk == j] = t
+    return Lk
+

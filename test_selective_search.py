@@ -165,3 +165,24 @@ class TestNewAdjacencyDict:
         assert Ak[5] == {1, 4, 6}
         assert Ak[6] == {0, 1, 4, 5}
 
+
+class TestNewLabel:
+    def setup_method(self, method):
+        self.L  = numpy.array([[0, 0, 0, 0, 0, 0],\
+                               [1, 2, 2, 3, 3, 4],\
+                               [1, 2, 2, 3, 3, 4],\
+                               [5, 5, 5, 5, 5, 5]])
+        self.Lk = numpy.array([[0, 0, 0, 0, 0, 0],\
+                               [1, 6, 6, 6, 6, 4],\
+                               [1, 6, 6, 6, 6, 4],\
+                               [5, 5, 5, 5, 5, 5]])
+
+    def test_exclusiveness(self):
+        selective_search._new_label_image(self.L, 2, 3, 6)
+        assert len(self.L[self.L == 2]) == 4
+        assert len(self.L[self.L == 3]) == 4
+
+    def test_new_label(self):
+        Lk_actual = selective_search._new_label_image(self.L, 2, 3, 6)
+        assert numpy.array_equal(self.Lk, Lk_actual)
+
