@@ -6,6 +6,7 @@ import numpy
 import scipy.sparse
 import segment
 import collections
+import features
 
 def _calc_adjacency_matrix(label_img, n_region):
     r = numpy.vstack([label_img[:, :-1].ravel(), label_img[:, 1:].ravel()])
@@ -27,11 +28,8 @@ def _new_adjacency_dict(A, i, j, t):
     Ak[t] = (Ak[i] | Ak[j]) - {i, j}
     del Ak[i], Ak[j]
     for (p, Q) in Ak.items():
-        if i in Q:
-            Q.remove(i)
-            Q.add(t)
-        if j in Q:
-            Q.remove(j)
+        if i in Q or j in Q:
+            Q -= {i, j}
             Q.add(t)
 
     return Ak
@@ -44,9 +42,7 @@ def _new_label_image(L, i, j, t):
 def _build_initial_similarity_set(A0, feature_extractor):
     S = list()
     for (i, J) in A0.items():
-        for j in J:
-            if i < j:
-                S.append((feature_extractor.similarity(i, j), (i, j)))
+        S += [(feature_extractor.similarity(i, j), (i, j)) for j in J if i < j]
 
     return sorted(S)
 
