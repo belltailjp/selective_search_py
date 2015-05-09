@@ -46,3 +46,13 @@ def _build_initial_similarity_set(A0, feature_extractor):
 
     return sorted(S)
 
+def _merge_similarity_set(feature_extractor, Ak, S, i, j, t):
+    # remove entries which have i or j
+    S = list(filter(lambda x: not(i in x[1] or j in x[1]), S))
+
+    # calculate similarity between region t and its adjacencies
+    St = [(feature_extractor.similarity(t, x), (t, x)) for x in Ak[t] if t < x] +\
+         [(feature_extractor.similarity(x, t), (x, t)) for x in Ak[t] if x < t]
+
+    return sorted(S + St)
+

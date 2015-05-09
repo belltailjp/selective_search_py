@@ -214,3 +214,30 @@ class TestBuildInitialSimilaritySet:
         S = selective_search._build_initial_similarity_set(self.A0, self.feature_extractor)
         assert S == expected
 
+class TestMergeSimilaritySet:
+    def setup_method(self, method):
+        # 0011  =>  0011
+        # 2233  =>  4444
+        # (i, j, t) = (2, 3, 4)
+
+        # target similarity set (similarity values are all dummy)
+        self.S = [(1, (0, 1)),\
+                  (2, (0, 2)),\
+                  (3, (1, 3)),\
+                  (5, (2, 3))]
+
+        # assumption: adjacency dict is already updated
+        self.Ak = {0: {1, 4},\
+                   1: {0, 4},\
+                   4: {0, 1}}
+
+        self.extractor = type('Feature', (), {'similarity' : (lambda i, j: i + j)})
+
+    def test_value(self):
+        S_ = selective_search._merge_similarity_set(self.extractor, self.Ak, self.S, 2, 3, 4)
+        expect_S = [(1, (0, 1)),\
+                    (4, (0, 4)),\
+                    (5, (1, 4))]
+
+        assert S_ == expect_S
+
