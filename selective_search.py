@@ -37,10 +37,10 @@ def _new_adjacency_dict(A, i, j, t):
 
     return Ak
 
-def _new_label_image(L, i, j, t):
-    Lk = numpy.copy(L)
-    Lk[Lk == i] = Lk[Lk == j] = t
-    return Lk
+def _new_label_image(F, i, j, t):
+    Fk = numpy.copy(F)
+    Fk[Fk == i] = Fk[Fk == j] = t
+    return Fk
 
 def _build_initial_similarity_set(A0, feature_extractor):
     S = list()
@@ -63,9 +63,9 @@ def hierarchical_segmentation(I):
     if len(I.shape) == 2:
         I = skimage.color.gray2rgb(I)
 
-    L0, n_region = segment.segment_label(I, 0.5, 500, 50)
-    adj_mat, A0 = _calc_adjacency_matrix(L0, n_region)
-    feature_extractor = features.Features(I, L0, n_region)
+    F0, n_region = segment.segment_label(I, 0.8, 100, 100)
+    adj_mat, A0 = _calc_adjacency_matrix(F0, n_region)
+    feature_extractor = features.Features(I, F0, n_region)
 
     # stores list of regions sorted by their similarity
     S = _build_initial_similarity_set(A0, feature_extractor)
@@ -74,7 +74,7 @@ def hierarchical_segmentation(I):
     R = {i : set() for i in range(n_region)}
 
     A = [A0]    # stores adjacency relation for each step
-    L = [L0]    # stores label image for each step
+    F = [F0]    # stores label image for each step
 
     # greedy hierarchical grouping loop
     while len(S):
@@ -87,13 +87,7 @@ def hierarchical_segmentation(I):
 
         S = _merge_similarity_set(feature_extractor, Ak, S, i, j, t)
 
-        L.append(_new_label_image(L[-1], i, j, t))
+        F.append(_new_label_image(F[-1], i, j, t))
 
-    return (R, L)
-
-def visualize_segmentation(R, L):
-    color_map = numpy.random.random((len(R), 3))
-    for (k, Lk) in enumerate(L):
-        img = color_map[Lk]
-        skimage.io.imsave("label_%03d.png" % k, img)
+    return (R, F)
 
