@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import datetime
 import copy
 import numpy
 import scipy.sparse
 import segment
 import collections
+import skimage.io
 import features
+import itertools
 
 def _calc_adjacency_matrix(label_img, n_region):
     r = numpy.vstack([label_img[:, :-1].ravel(), label_img[:, 1:].ravel()])
@@ -55,4 +58,36 @@ def _merge_similarity_set(feature_extractor, Ak, S, i, j, t):
          [(feature_extractor.similarity(x, t), (x, t)) for x in Ak[t] if x < t]
 
     return sorted(S + St)
+
+def hierarchical_segmentation(I):
+    if len(I.shape) == 2:
+        I = skimage.color.gray2rgb(I)
+
+    L0, n_region = segment.segment_label(I, 0.5, 500, 50)
+    adj_mat, A0 = _calc_adjacency_matrix(L0, n_region)
+    feature_extractor = features.Features(I, L0, n_region)
+
+    # stores list of regions sorted by their similarity
+    S = _build_initial_similarity_set(A0, feature_extractor)
+
+    # stores region label and its parent (empty if initial).
+    R = {i : set() for i in range(n_region)}
+
+    A = [A0]    # stores adjacency relation for each step
+    L = [L0]    # stores label image for each step
+
+    # greedy hierarchical grouping loop
+    while len(S):
+        (s, (i, j)) = S.pop()
+        t = feature_extractor.merge(i, j)
+        R[t] = {i, j}
+
+        Ak = _new_adjacency_dict(A[-1], i, j, t)
+        A.append(Ak)
+
+        S = _merge_similarity_set(feature_extractor, Ak, S, i, j, t)
+
+        L.append(_new_label_image(L[-1], i, j, t))
+
+    return (R, L)
 
