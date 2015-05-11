@@ -89,5 +89,8 @@ def hierarchical_segmentation(I):
 
         F.append(_new_label_image(F[-1], i, j, t))
 
-    return (R, F)
+    # bounding boxes for each hierarchy
+    L = feature_extractor.bbox
+
+    return (R, F, L)
 
