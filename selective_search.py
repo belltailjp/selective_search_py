@@ -91,3 +91,9 @@ def hierarchical_segmentation(I):
 
     return (R, L)
 
+def visualize_segmentation(R, L):
+    color_map = numpy.random.random((len(R), 3))
+    for (k, Lk) in enumerate(L):
+        img = color_map[Lk]
+        skimage.io.imsave("label_%03d.png" % k, img)
+
