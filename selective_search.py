@@ -94,3 +94,15 @@ def hierarchical_segmentation(I):
 
     return (R, F, L)
 
+def _generate_regions(R, L):
+    n_ini = sum(not parent for parent in R.values())
+    n_all = len(R)
+
+    regions = list()
+    for label in R.keys():
+        i = min(n_all - n_ini + 1, n_all - label)
+        vi = numpy.random.rand() * i
+        regions.append((vi, L[i]))
+
+    return sorted(regions)
+
