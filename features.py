@@ -8,10 +8,10 @@ import skimage
 import skimage.filters
 import scipy.ndimage.filters
 
-SimilarityWeight = collections.namedtuple("SimilarityWeight", ["size", "color", "texture", "fill"])
+SimilarityMask = collections.namedtuple("SimilarityMask", ["size", "color", "texture", "fill"])
 
 class Features:
-    def __init__(self, image, label, n_region, similarity_weight = SimilarityWeight(1, 1, 1, 1)):
+    def __init__(self, image, label, n_region, similarity_weight = SimilarityMask(1, 1, 1, 1)):
         self.image = image
         self.label = label
         self.w     = similarity_weight

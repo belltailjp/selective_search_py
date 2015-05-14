@@ -136,7 +136,7 @@ class TestSimilarity:
         monkeypatch.setattr(features.Features, '_Features__sim_texture',lambda self, i, j: 1)
         monkeypatch.setattr(features.Features, '_Features__sim_color',  lambda self, i, j: 1)
         monkeypatch.setattr(features.Features, '_Features__sim_fill',   lambda self, i, j: 1)
-        w = features.SimilarityWeight(1, 1, 1, 1)
+        w = features.SimilarityMask(1, 1, 1, 1)
         f = features.Features(self.dummy_image, self.dummy_label, 1, w)
         assert f.similarity(0, 1) == 4
 
