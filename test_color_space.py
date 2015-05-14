@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pytest
 import numpy
 from color_space import *
 
@@ -78,4 +79,21 @@ class TestColorSpace:
         assert ((img[:, :, 0] == expected_h).all())
         assert ((img[:, :, 1] == expected_h).all())
         assert ((img[:, :, 2] == expected_h).all())
+
+
+    def test_convert_color_nonexisting_color(self):
+        with pytest.raises(KeyError):
+            convert_color(self.Irand, 'nonexisting-colorspace')
+
+    def test_convert_color_give_singlechannel_image(self):
+        I = numpy.random.randint(0, 255, (10, 10)).astype(numpy.uint8)
+        assert numpy.array_equal(convert_color(I, 'rgb')[:, :, 0], I)
+
+    def test_convert_color_value(self):
+        assert numpy.array_equal(convert_color(self.Irand, 'rgb'), self.Irand)
+        assert numpy.array_equal(convert_color(self.Irand, 'lab'), to_Lab(self.Irand))
+        assert numpy.array_equal(convert_color(self.Irand, 'rgi'), to_rgI(self.Irand))
+        assert numpy.array_equal(convert_color(self.Irand, 'hsv'), to_HSV(self.Irand))
+        assert numpy.array_equal(convert_color(self.Irand, 'nrgb'), to_nRGB(self.Irand))
+        assert numpy.array_equal(convert_color(self.Irand, 'hue'), to_Hue(self.Irand))
 

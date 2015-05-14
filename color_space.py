@@ -5,6 +5,18 @@ import numpy
 import skimage.io
 import skimage.color
 
+def convert_color(I, name):
+    if len(I.shape) != 3:
+        I = skimage.color.gray2rgb(I)
+
+    converters = {'rgb' : lambda I: I,
+                  'lab' : to_Lab,
+                  'rgi' : to_rgI,
+                  'hsv' : to_HSV,
+                  'nrgb' : to_nRGB,
+                  'hue' : to_Hue}
+
+    return converters[name](I)
 
 def to_grey(I):
     grey_img = (255 * skimage.color.rgb2grey(I)).astype(numpy.uint8)
