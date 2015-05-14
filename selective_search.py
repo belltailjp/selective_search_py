@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import itertools
 import copy
 import numpy
 import scipy.sparse
@@ -9,7 +10,7 @@ import segment
 import collections
 import skimage.io
 import features
-import itertools
+import color_space
 
 def _calc_adjacency_matrix(label_img, n_region):
     r = numpy.vstack([label_img[:, :-1].ravel(), label_img[:, 1:].ravel()])
@@ -59,11 +60,8 @@ def _merge_similarity_set(feature_extractor, Ak, S, i, j, t):
 
     return sorted(S + St)
 
-def hierarchical_segmentation(I):
-    if len(I.shape) == 2:
-        I = skimage.color.gray2rgb(I)
-
-    F0, n_region = segment.segment_label(I, 0.8, 100, 100)
+def hierarchical_segmentation(I, k = 100, feature_mask = features.SimilarityMask(1, 1, 1, 1)):
+    F0, n_region = segment.segment_label(I, 0.8, k, 100)
     adj_mat, A0 = _calc_adjacency_matrix(F0, n_region)
     feature_extractor = features.Features(I, F0, n_region)
 
@@ -104,5 +102,15 @@ def _generate_regions(R, L):
         vi = numpy.random.rand() * i
         regions.append((vi, L[i]))
 
+    return sorted(regions)
+
+def selective_search(I, color_spaces = ['rgb'], ks = [100], feature_masks = [features.SimilarityMask(1, 1, 1, 1)]):
+    regions = list()
+    for color_name in color_spaces:
+        I_color = color_space.convert_color(I, color_name)
+        for k in ks:
+            for feature_mask in feature_masks:
+                (R, F, L) = hierarchical_segmentation(I_color, k, feature_mask)
+                regions += _generate_regions(R, L)
     return sorted(regions)
 
