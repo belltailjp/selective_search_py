@@ -28,6 +28,7 @@ if __name__=="__main__":
     parser.add_argument('-c', '--color',    nargs=1,    default='rgb', choices=['rgb', 'lab', 'rgi', 'hsv', 'nrgb', 'hue'], help='color space')
     parser.add_argument('-f', '--feature',  nargs="+",  default=['texture', 'fill'], choices=['size', 'color', 'texture', 'fill'], help='feature for similarity calculation')
     parser.add_argument('-o', '--output',   type=str,   default='result', help='prefix of resulting images')
+    parser.add_argument('-a', '--alpha',    type=float, default=1.0, help='alpha value for compositing result image with input image')
     args = parser.parse_args()
 
     img = skimage.io.imread(args.image)
@@ -47,7 +48,8 @@ if __name__=="__main__":
 
     colors = generate_color_table(R)
     for depth, label in enumerate(F):
-        result = colors[label].astype(numpy.uint8)
+        result = colors[label]
+        result = (result * args.alpha + img * (1. - args.alpha)).astype(numpy.uint8)
         fn = "%s_%04d.png" % (args.output, depth)
         skimage.io.imsave(fn, result)
         print('.', end="")
