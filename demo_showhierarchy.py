@@ -10,6 +10,17 @@ import features
 import color_space
 import selective_search
 
+def generate_color_table(R):
+    # generate initial color
+    colors = numpy.random.randint(0, 255, (len(R), 3))
+
+    # merged-regions are colored same as larger parent
+    for region, parent in R.items():
+        if not len(parent) == 0:
+            colors[region] = colors[parent[0]]
+
+    return colors
+
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('image',            type=str,   help='filename of the image')
@@ -34,7 +45,7 @@ if __name__=="__main__":
     # suppress warning when saving result images
     warnings.filterwarnings("ignore", category = UserWarning)
 
-    colors = numpy.random.randint(0, 255, (len(R), 3))
+    colors = generate_color_table(R)
     for depth, label in enumerate(F):
         result = colors[label].astype(numpy.uint8)
         fn = "%s_%04d.png" % (args.output, depth)

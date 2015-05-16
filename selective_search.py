@@ -69,7 +69,7 @@ def hierarchical_segmentation(I, k = 100, feature_mask = features.SimilarityMask
     S = _build_initial_similarity_set(A0, feature_extractor)
 
     # stores region label and its parent (empty if initial).
-    R = {i : set() for i in range(n_region)}
+    R = {i : () for i in range(n_region)}
 
     A = [A0]    # stores adjacency relation for each step
     F = [F0]    # stores label image for each step
@@ -78,7 +78,9 @@ def hierarchical_segmentation(I, k = 100, feature_mask = features.SimilarityMask
     while len(S):
         (s, (i, j)) = S.pop()
         t = feature_extractor.merge(i, j)
-        R[t] = {i, j}
+
+        # record merged region (larger region should come first)
+        R[t] = (i, j) if feature_extractor.size[j] < feature_extractor.size[i] else (j, i)
 
         Ak = _new_adjacency_dict(A[-1], i, j, t)
         A.append(Ak)
