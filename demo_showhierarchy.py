@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import argparse
+import warnings
 import numpy
 import skimage.io
 import features
@@ -27,12 +29,18 @@ if __name__=="__main__":
 
     mask = features.SimilarityMask('size' in args.feature, 'color' in args.feature, 'texture' in args.feature, 'fill' in args.feature)
     (R, F, L) = selective_search.hierarchical_segmentation(img, args.k, mask)
+    print('result filename: %s_[0000-%04d].png' % (args.output, len(F) - 1))
+
+    # suppress warning when saving result images
+    warnings.filterwarnings("ignore", category = UserWarning)
 
     colors = numpy.random.randint(0, 255, (len(R), 3))
     for depth, label in enumerate(F):
         result = colors[label].astype(numpy.uint8)
         fn = "%s_%04d.png" % (args.output, depth)
         skimage.io.imsave(fn, result)
+        print('.', end="")
+        sys.stdout.flush()
 
-    print('result filename: %s_[0000-%04d].png' % (args.output, len(F) - 1))
+    print()
 
