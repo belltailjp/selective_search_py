@@ -4,27 +4,35 @@
 import os
 import sys
 import argparse
+import itertools
 import numpy
 import skimage.io
+import color_space
+import features
 import selective_search
 
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-color_choises = ["RGB", "Lab", "rgI", "HSV", "nRGB", "Hue"]
-k_choises = ["50", "100", "150", "250", "500"]
-similarity_choises = ["Texture", "Color", "Fill", "Size"]
+#color_choises = ["RGB", "Lab", "rgI", "HSV", "nRGB", "Hue"]
+color_choises = ["RGB", "rgI", "HSV", "nRGB", "Hue"]
+k_choises = ["50", "100", "150", "300"]
+similarity_choises = ["C", "T", "S", "F",\
+                      "C+T", "C+S", "C+F", "T+S", "T+F", "S+F",\
+                      "C+T+S", "C+T+F", "C+S+F", "T+S+F",\
+                      "C+T+S+F"]
 
 class Demo(QWidget):
     chosen_colors = {"RGB"}
     chosen_ks = {"100"}
-    chosen_similarities = set(similarity_choises)
+    chosen_similarities = {"C+T+S+F", "T+S+F", "F", "S"}
+    regions = list()
 
-    def __init__(self, ndimg, regions):
+    def __init__(self, ndimg):
         super().__init__()
+        self.ndimg = ndimg
         h, w = ndimg.shape[:2]
         self.qimg = QImage(ndimg.flatten(), w, h, QImage.Format_RGB888)
-        self.regions = regions
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)
@@ -69,12 +77,10 @@ class Demo(QWidget):
         label.setText('count:')
         hbox.addWidget(label)
 
-        slider = QSlider(Qt.Horizontal)
-        slider.setMinimum(0)
-        slider.setMaximum(len(regions))
-        slider.valueChanged.connect(self.count_changed)
-        slider.setValue(int(len(regions) / 4))
-        hbox.addWidget(slider)
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.valueChanged.connect(self.count_changed)
+        hbox.addWidget(self.slider)
 
         self.count_label = QLabel()
         hbox.addWidget(self.count_label)
@@ -117,7 +123,15 @@ class Demo(QWidget):
         self.__parameter_changed()
 
     def __parameter_changed(self):
-        print(self.chosen_colors, self.chosen_ks, self.chosen_similarities)
+        # obtain parameters
+        color_spaces = [color.lower() for color in self.chosen_colors]
+        ks = [float(k) for k in self.chosen_ks]
+        similarity_masks = [features.SimilarityMask('S' in mask, 'C' in mask, 'T' in mask, 'F' in mask) for mask in self.chosen_similarities]
+
+        self.regions = selective_search.selective_search(self.ndimg, color_spaces, ks, similarity_masks)
+        self.slider.setMaximum(len(self.regions))
+        self.slider.setValue(int(len(self.regions) / 4))
+        self.__draw()
 
     def __draw(self, count):
         self.pixmap = QPixmap(self.qimg)
@@ -138,9 +152,8 @@ if __name__=="__main__":
     if len(img.shape) == 2:
         img = skimage.color.gray2rgb(img)
 
-    regions = selective_search.selective_search(img)
     app = QApplication(sys.argv)
-    wnd = Demo(img, regions)
+    wnd = Demo(img)
     wnd.show()
     app.exec_()
 
