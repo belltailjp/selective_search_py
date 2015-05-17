@@ -11,7 +11,15 @@ import selective_search
 from PySide.QtCore import *
 from PySide.QtGui import *
 
+color_choises = ["RGB", "Lab", "rgI", "HSV", "nRGB", "Hue"]
+k_choises = ["50", "100", "150", "250", "500"]
+similarity_choises = ["Texture", "Color", "Fill", "Size"]
+
 class Demo(QWidget):
+    chosen_colors = {"RGB"}
+    chosen_ks = {"100"}
+    chosen_similarities = set(similarity_choises)
+
     def __init__(self, ndimg, regions):
         super().__init__()
         h, w = ndimg.shape[:2]
@@ -20,12 +28,39 @@ class Demo(QWidget):
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)
+        self.__init_parameter_choises()
         self.__init_imagearea()
         self.__init_slider()
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Escape:
+            self.close()
+
     def __init_imagearea(self):
         self.label = QLabel()
-        self.layout.addWidget(self.label, 0, 0)
+        self.layout.addWidget(self.label, 0, 1)
+
+    def __init_parameter_choises(self):
+        choise_vbox = QVBoxLayout()
+        self.__init_choises(choise_vbox, 'Color space', color_choises, self.chosen_colors, self.color_selected)
+        self.__init_choises(choise_vbox, 'k', k_choises, self.chosen_ks, self.k_selected)
+        self.__init_choises(choise_vbox, 'Similarity measure', similarity_choises, self.chosen_similarities, self.similarity_selected)
+        self.layout.addLayout(choise_vbox, 0, 0)
+
+    def __init_choises(self, choise_vbox, title, choises, default_choises, handler):
+        group = QGroupBox(title)
+        group.setFlat(False)
+
+        vbox = QVBoxLayout()
+        for choise in choises:
+            checkbox = QCheckBox(choise)
+            if choise in default_choises:
+                checkbox.setCheckState(Qt.Checked)
+            checkbox.stateChanged.connect(handler)
+            vbox.addWidget(checkbox)
+
+        group.setLayout(vbox)
+        choise_vbox.addWidget(group)
 
     def __init_slider(self):
         hbox = QHBoxLayout()
@@ -44,12 +79,45 @@ class Demo(QWidget):
         self.count_label = QLabel()
         hbox.addWidget(self.count_label)
 
-        self.layout.addLayout(hbox, 1, 0)
+        self.layout.addLayout(hbox, 1, 1)
 
 
     def count_changed(self, value):
         self.__draw(value)
         self.count_label.setText(str(value))
+
+    def color_selected(self, value):
+        color = self.sender().text()
+        if value:
+            self.chosen_colors.add(color)
+        else:
+            self.chosen_colors.remove(color)
+            if len(self.chosen_colors) == 0:
+                self.sender().setCheckState(Qt.Checked)
+        self.__parameter_changed()
+
+    def k_selected(self, value):
+        k = self.sender().text()
+        if value:
+            self.chosen_ks.add(k)
+        else:
+            self.chosen_ks.remove(k)
+            if len(self.chosen_ks) == 0:
+                self.sender().setCheckState(Qt.Checked)
+        self.__parameter_changed()
+
+    def similarity_selected(self, value):
+        similarity = self.sender().text()
+        if value:
+            self.chosen_similarities.add(similarity)
+        else:
+            self.chosen_similarities.remove(similarity)
+            if len(self.chosen_similarities) == 0:
+                self.sender().setCheckState(Qt.Checked)
+        self.__parameter_changed()
+
+    def __parameter_changed(self):
+        print(self.chosen_colors, self.chosen_ks, self.chosen_similarities)
 
     def __draw(self, count):
         self.pixmap = QPixmap(self.qimg)
