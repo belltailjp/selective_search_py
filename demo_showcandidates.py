@@ -37,8 +37,10 @@ class Demo(QWidget):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.__init_parameter_choises()
+        self.__init_runbutton()
         self.__init_imagearea()
         self.__init_slider()
+        self.__draw()
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
@@ -47,6 +49,14 @@ class Demo(QWidget):
     def __init_imagearea(self):
         self.label = QLabel()
         self.layout.addWidget(self.label, 0, 2)
+
+    def __init_runbutton(self):
+        button = QPushButton("Run")
+        button.clicked.connect(self.runButtonClicked)
+        self.layout.addWidget(button, 2, 1)
+
+    def runButtonClicked(self):
+        self.__parameter_changed()
 
     def __init_parameter_choises(self):
         color_checkbox = self.__init_choises('Color space', color_choises, self.chosen_colors, self.color_selected)
@@ -94,7 +104,7 @@ class Demo(QWidget):
 
 
     def count_changed(self, value):
-        self.__draw(value)
+        self.__draw()
         self.count_label.setText(str(value))
 
     def color_selected(self, value):
@@ -105,7 +115,6 @@ class Demo(QWidget):
             self.chosen_colors.remove(color)
             if len(self.chosen_colors) == 0:
                 self.sender().setCheckState(Qt.Checked)
-        self.__parameter_changed()
 
     def k_selected(self, value):
         k = self.sender().text()
@@ -115,7 +124,6 @@ class Demo(QWidget):
             self.chosen_ks.remove(k)
             if len(self.chosen_ks) == 0:
                 self.sender().setCheckState(Qt.Checked)
-        self.__parameter_changed()
 
     def similarity_selected(self, value):
         similarity = self.sender().text()
@@ -125,7 +133,6 @@ class Demo(QWidget):
             self.chosen_similarities.remove(similarity)
             if len(self.chosen_similarities) == 0:
                 self.sender().setCheckState(Qt.Checked)
-        self.__parameter_changed()
 
     def __parameter_changed(self):
         # obtain parameters
@@ -138,11 +145,11 @@ class Demo(QWidget):
         self.slider.setValue(int(len(self.regions) / 4))
         self.__draw()
 
-    def __draw(self, count):
+    def __draw(self):
         self.pixmap = QPixmap(self.qimg)
         painter = QPainter(self.pixmap)
         painter.setPen(QColor(0, 255, 0))
-        for v, (y0, x0, y1, x1) in self.regions[:count]:
+        for v, (y0, x0, y1, x1) in self.regions[:int(self.slider.value())]:
             painter.drawRect(x0, y0, x1, y1)
 
         self.label.setPixmap(self.pixmap)
