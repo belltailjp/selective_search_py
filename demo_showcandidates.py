@@ -43,7 +43,7 @@ class Demo(QWidget):
         self.__draw()
 
     def keyPressEvent(self, e):
-        if e.key() == Qt.Key_Escape:
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Q:
             self.close()
 
     def __init_imagearea(self):
@@ -66,8 +66,10 @@ class Demo(QWidget):
         color_k_vbox = QVBoxLayout()
         color_k_vbox.addWidget(color_checkbox)
         color_k_vbox.addWidget(k_checkbox)
-
+        spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        color_k_vbox.addSpacerItem(spacer)
         self.layout.addLayout(color_k_vbox, 0, 0)
+
         self.layout.addWidget(sim_checkbox, 0, 1)
 
     def __init_choises(self, title, choises, default_choises, handler):
