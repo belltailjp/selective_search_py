@@ -107,6 +107,34 @@ For diversification strategy, this implementation supports to vary the following
 You can give any combinations for each strategy.
 
 
+## How to integrate to your code
+
+If you just want to use this implementation as a black box, only the `selective_search` module is necessary to import.
+
+```python
+from selective_search import *
+
+img = skimage.io.imread('image.png')
+regions = selective_search(img)
+for v, (i0, j0, i1, j1) in regions:
+    ...
+```
+
+Then you can get a list regions sorted by score in ascending order.
+Regions with larger score (latter elements of the list) are considered as 'non-prospective' regions, so they can be filtered out as you need.
+
+To change parameters, just give a list of values for each diversification strategy. Note that they must be given as a list.
+`selective_search` returns a single list of generated regions which contains every combination of selective search result.
+This result is also sorted.
+
+```python
+regions = selective_search(img, \
+                           color_spaces = ['rgb', 'hsv'],\  #color space. should be lower case.
+                           ks = [50, 150, 300],\            #k.
+                           feature_masks = [(0, 0, 1, 1)])  #indicates whether S/C/T/F similarity is used, respectively.
+```
+
+
 ## Test
 
 This implementation contains automated unit tests using PyTest.
