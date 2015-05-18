@@ -46,16 +46,21 @@ class Demo(QWidget):
 
     def __init_imagearea(self):
         self.label = QLabel()
-        self.layout.addWidget(self.label, 0, 1)
+        self.layout.addWidget(self.label, 0, 2)
 
     def __init_parameter_choises(self):
-        choise_vbox = QVBoxLayout()
-        self.__init_choises(choise_vbox, 'Color space', color_choises, self.chosen_colors, self.color_selected)
-        self.__init_choises(choise_vbox, 'k', k_choises, self.chosen_ks, self.k_selected)
-        self.__init_choises(choise_vbox, 'Similarity measure', similarity_choises, self.chosen_similarities, self.similarity_selected)
-        self.layout.addLayout(choise_vbox, 0, 0)
+        color_checkbox = self.__init_choises('Color space', color_choises, self.chosen_colors, self.color_selected)
+        k_checkbox = self.__init_choises('k', k_choises, self.chosen_ks, self.k_selected)
+        sim_checkbox = self.__init_choises('Similarity measure', similarity_choises, self.chosen_similarities, self.similarity_selected)
 
-    def __init_choises(self, choise_vbox, title, choises, default_choises, handler):
+        color_k_vbox = QVBoxLayout()
+        color_k_vbox.addWidget(color_checkbox)
+        color_k_vbox.addWidget(k_checkbox)
+
+        self.layout.addLayout(color_k_vbox, 0, 0)
+        self.layout.addWidget(sim_checkbox, 0, 1)
+
+    def __init_choises(self, title, choises, default_choises, handler):
         group = QGroupBox(title)
         group.setFlat(False)
 
@@ -68,7 +73,7 @@ class Demo(QWidget):
             vbox.addWidget(checkbox)
 
         group.setLayout(vbox)
-        choise_vbox.addWidget(group)
+        return group
 
     def __init_slider(self):
         hbox = QHBoxLayout()
@@ -85,7 +90,7 @@ class Demo(QWidget):
         self.count_label = QLabel()
         hbox.addWidget(self.count_label)
 
-        self.layout.addLayout(hbox, 1, 1)
+        self.layout.addLayout(hbox, 1, 2)
 
 
     def count_changed(self, value):
