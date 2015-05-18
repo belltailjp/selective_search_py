@@ -13,6 +13,7 @@ For more details about the method, please refer the original paper.
 
 This implementation is based on the journal edition of the original paper, and giving similar parameter variations.
 
+![segmentation example](doc/segmentation_example.png)
 ![selective search example](doc/ss_sample.png)
 
 
