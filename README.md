@@ -2,12 +2,18 @@
 
 This is a python implementation of the Selective Search [[1]](#selective_search_ijcv)[[2]](#selective_search_iccv).
 
-The Selective Search is used as a preprocess of object detection pipeline.<br/>
-It finds regions likely to contain any objects from input image regardless of its scale and location,
-allows detector to concentrate only for such regions.<br/>
+The Selective Search is used as a preprocess of object detection/recognition pipeline.<br/>
+It finds regions likely to contain any objects from an input image regardless of its scale and location,
+that allows detectors to concentrate only for such 'prospective' regions.<br/>
 Therefore you can configure more computationally efficient detector,
-or use more rich feature representation and classification method [[4]](#deeplearning)
+or use more rich feature representation and classification method [[3]](#deeplearning)
 compared to the conventional exhaustive search scheme.
+
+For more details about the method, please refer the original paper.
+
+This implementation is based on the journal edition of the original paper, and giving similar parameter variations.
+
+![selective search example](doc/ss_sample.png)
 
 
 # Requirements
@@ -21,14 +27,14 @@ compared to the conventional exhaustive search scheme.
     * pytest (>= 2.7.0)
 * Boost (>= 1.58.0) built with python support
 * [Boost.NumPy](https://github.com/ndarray/Boost.NumPy)
-    * I got an error to build therefore I fixed (See [belltailjp/Boost.NumPy](https://github.com/belltailjp/Boost.NumPy))
+    * If you got an error to build, see [belltailjp/Boost.NumPy](https://github.com/belltailjp/Boost.NumPy))
 
 In addition, this is only tested on x64 Linux environment.
 
 
 # Preparation
 
-This implementation contains a few C++ code which wraps the Efficient Graph-Based Image Segmentation [[3]](#segmentation) used for generating an initial value.
+This implementation contains a few C++ code which wraps the Efficient Graph-Based Image Segmentation [[4]](#segmentation) used for generating an initial value.
 It works as a python module, so build it first.
 
 ```sh
@@ -96,7 +102,7 @@ For diversification strategy, this implementation supports to vary the following
 * Similarity measure
     * Texture, Color, Fill and Size
 * Initial segmentation parameter *k*
-    * As the initial (fine-grained) segmentation, this implementation uses [[3]](#segmentation). *k* is one of the parameters of the method.
+    * As the initial (fine-grained) segmentation, this implementation uses [[4]](#segmentation). *k* is one of the parameters of the method.
 
 You can give any combinations for each strategy.
 
@@ -123,6 +129,6 @@ For , please ask authors of the original paper.
 
 \[1\] <a name="selective_search_ijcv"> [J. R. R. Uijlings et al., Selective Search for Object Recognition, IJCV, 2013](https://ivi.fnwi.uva.nl/isis/publications/bibtexbrowser.php?key=UijlingsIJCV2013&bib=all.bib) <br/>
 \[2\] <a name="selective_search_iccv"> [Koen van de Sande et al., Segmentation As Selective Search for Object Recognition, ICCV, 2011](https://ivi.fnwi.uva.nl/isis/publications/bibtexbrowser.php?key=UijlingsIJCV2013&bib=all.bib) <br/>
-\[3\] <a name="segmentation"> [P. Felzenszwalb et al., Efficient Graph-Based Image Segmentation, IJCV, 2004](http://cs.brown.edu/~pff/segment/) <br/>
-\[4\] <a name="deeplearning"> [R. Girshick et al., Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation, CVPR, 2014](http://www.cs.berkeley.edu/~rbg/papers/r-cnn-cvpr.pdf) <br/>
-\[5\] <a name="color_invariance"> J. M. Geusebroek et al., Color invariance, TPAMI, 2001]
+\[3\] <a name="deeplearning"> [R. Girshick et al., Rich Feature Hierarchies for Accurate Object Detection and Semantic Segmentation, CVPR, 2014](http://www.cs.berkeley.edu/~rbg/papers/r-cnn-cvpr.pdf) <br/>
+\[4\] <a name="segmentation"> [P. Felzenszwalb et al., Efficient Graph-Based Image Segmentation, IJCV, 2004](http://cs.brown.edu/~pff/segment/) <br/>
+\[5\] <a name="color_invariance"> J. M. Geusebroek et al., Color invariance, TPAMI, 2001
