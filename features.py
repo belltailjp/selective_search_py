@@ -47,7 +47,7 @@ class Features:
         bbox = dict()
         for region in range(n_region):
             I, J = numpy.where(self.label == region)
-            bbox[region] = numpy.array([min(I), min(J), max(I), max(J)])
+            bbox[region] = (min(I), min(J), max(I), max(J))
         return bbox
 
     def __init_texture(self, n_region):
@@ -126,7 +126,7 @@ class Features:
 
     def __merge_bbox(self, i, j, new_region_id):
         (bi0, bi1, bi2, bi3), (bj0, bj1, bj2, bj3) = self.bbox[i], self.bbox[j]
-        self.bbox[new_region_id] = numpy.array([min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3)])
+        self.bbox[new_region_id] = (min(bi0, bj0), min(bi1, bj1), max(bi2, bj2), max(bi3, bj3))
 
     def merge(self, i, j):
         new_region_id = len(self.size)

@@ -75,8 +75,7 @@ class TestFeaturesBoundingBox:
     def test_1region(self):
         bb = self.f._Features__init_bounding_box(1)
         assert len(bb) == 1
-        assert bb[0].shape == (4,)
-        assert numpy.array_equal(bb[0], [0, 0, 9, 9])
+        assert bb[0] == (0, 0, 9, 9)
 
     def test_4region(self):
         self.f.label[:5, :5] = 0
@@ -85,10 +84,10 @@ class TestFeaturesBoundingBox:
         self.f.label[5:, 5:] = 3
         bb = self.f._Features__init_bounding_box(4)
         assert len(bb) == 4
-        assert numpy.array_equal(bb[0], [0, 0, 4, 4])
-        assert numpy.array_equal(bb[1], [0, 5, 4, 9])
-        assert numpy.array_equal(bb[2], [5, 0, 9, 4])
-        assert numpy.array_equal(bb[3], [5, 5, 9, 9])
+        assert bb[0] == (0, 0, 4, 4)
+        assert bb[1] == (0, 5, 4, 9)
+        assert bb[2] == (5, 0, 9, 4)
+        assert bb[3] == (5, 5, 9, 9)
 
 
 class TestSimilarity:
