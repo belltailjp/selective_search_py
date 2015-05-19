@@ -22,10 +22,7 @@ This implementation is based on the journal edition of the original paper, and g
 * CMake (>= 2.8)
 * GCC (>= 4.8.2)
 * Python (>= 3.4.3)
-    * numpy (>= 1.9.2)
-    * scikit-image (>= 0.11.3)
-    * PySide (>= 1.2.2)
-    * pytest (>= 2.7.0)
+    * For required packages, see `requirements.txt`
 * Boost (>= 1.58.0) built with python support
 * [Boost.NumPy](https://github.com/ndarray/Boost.NumPy)
     * If you got an error to build, see [belltailjp/Boost.NumPy](https://github.com/belltailjp/Boost.NumPy))
