@@ -112,9 +112,9 @@ def _selective_search_one(I, color, k, mask):
     (R, F, L) = hierarchical_segmentation(I_color, k, mask)
     return _generate_regions(R, L)
 
-def selective_search(I, color_spaces = ['rgb'], ks = [100], feature_masks = [features.SimilarityMask(1, 1, 1, 1)]):
+def selective_search(I, color_spaces = ['rgb'], ks = [100], feature_masks = [features.SimilarityMask(1, 1, 1, 1)], n_jobs = -1):
     parameters = itertools.product(color_spaces, ks, feature_masks)
-    region_set = joblib.Parallel(n_jobs = -1)(joblib.delayed(_selective_search_one)(I, color, k, mask) for (color, k, mask) in parameters)
+    region_set = joblib.Parallel(n_jobs = n_jobs)(joblib.delayed(_selective_search_one)(I, color, k, mask) for (color, k, mask) in parameters)
 
     #flatten list of list of tuple to list of tuple
     regions = sum(region_set, [])
