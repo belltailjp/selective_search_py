@@ -4,6 +4,7 @@
 import datetime
 import itertools
 import copy
+import joblib
 import numpy
 import scipy.sparse
 import segment
@@ -106,13 +107,16 @@ def _generate_regions(R, L):
 
     return sorted(regions)
 
+def _selective_search_one(I, color, k, mask):
+    I_color = color_space.convert_color(I, color)
+    (R, F, L) = hierarchical_segmentation(I_color, k, mask)
+    return _generate_regions(R, L)
+
 def selective_search(I, color_spaces = ['rgb'], ks = [100], feature_masks = [features.SimilarityMask(1, 1, 1, 1)]):
-    regions = list()
-    for color_name in color_spaces:
-        I_color = color_space.convert_color(I, color_name)
-        for k in ks:
-            for feature_mask in feature_masks:
-                (R, F, L) = hierarchical_segmentation(I_color, k, feature_mask)
-                regions += _generate_regions(R, L)
+    parameters = itertools.product(color_spaces, ks, feature_masks)
+    region_set = joblib.Parallel(n_jobs = -1)(joblib.delayed(_selective_search_one)(I, color, k, mask) for (color, k, mask) in parameters)
+
+    #flatten list of list of tuple to list of tuple
+    regions = sum(region_set, [])
     return sorted(regions)
 
