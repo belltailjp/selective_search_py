@@ -144,6 +144,13 @@ To execute full test, type:
 ```
 
 
+# License
+
+This code is publicly available under the MIT license.
+See LICENSE.txt for more details.
+
+
+
 # References
 
 \[1\] <a name="selective_search_ijcv"> [J. R. R. Uijlings et al., Selective Search for Object Recognition, IJCV, 2013](https://ivi.fnwi.uva.nl/isis/publications/bibtexbrowser.php?key=UijlingsIJCV2013&bib=all.bib) <br/>
