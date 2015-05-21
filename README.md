@@ -146,9 +146,10 @@ To execute full test, type:
 
 # License
 
-This code is publicly available under the MIT license.
-See LICENSE.txt for more details.
+This implementation is publicly available under the MIT license. See LICENSE.txt for more details.
 
+However regarding the selective search method itself, authors of the original paper have not mention anything so far.
+Please ask the original authors if you have any concens.
 
 
 # References
